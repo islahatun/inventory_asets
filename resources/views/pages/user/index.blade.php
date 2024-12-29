@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Fakultas')
+@section('title', 'User')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -38,8 +38,9 @@
                                                 <th class="text-center">
                                                     #
                                                 </th>
-                                                <th>Nama Jurusan</th>
-                                                <th>Status</th>
+                                                <th>Nama Divisi</th>
+                                                <th>Code</th>
+                                                <th>Role</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -56,13 +57,32 @@
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
                             </div>
-                            <form id="formJurusan" action="" method="method">
+                            <form id="formUser" action="" method="method">
                                 @csrf
                                 <div class="card-body">
                                     <input type="hidden" name="id">
                                     <div class="form-group">
-                                        <label for="catgory_name">Nama Jurusan</label>
-                                        <input type="text" id="jurusan" name="jurusan" class="form-control">
+                                        <label for="catgory_name">Nama Divisi</label>
+                                        <select name="departement" class="form-control" id="select2">
+                                            @foreach ($divisi as $d )
+                                            <option value="{{ $d->id }}">{{ $d->name_departement }}</option>
+                                            @endforeach
+
+                                        </select>
+                                        {{-- <input type="text" id="name_departement" name="name_departement" class="form-control"> --}}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="catgory_name">E-Mail</label>
+                                        <input type="text" name="email" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="catgory_name">Hak Akses</label>
+                                        <select name="role" class="form-control" id="select2">
+                                            <option value="1">User</option>
+                                            <option value="2">Administrator</option>
+                                            <option value="3">Pengawas</option>
+
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -95,7 +115,7 @@
         var method;
 
         method = 'POST';
-        formUrl= "{{ route('jurusan.store') }}"
+        formUrl= "{{ route('user.store') }}"
 
 
         $(document).ready(function() {
@@ -112,18 +132,23 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getDataJurusan') }}",
+                    "url": "{{ route('getDataUser') }}",
                 },
                 "columns": [{
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "jurusan",
+                        data: "departement",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "status",
+                        data: "user_code",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "role",
                         orderable: true,
                         searchable: true
                     },
@@ -142,7 +167,7 @@
                             result += `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result ;
                         },
-                        "targets": 3
+                        "targets": 4
                     },
                 ]
             });
@@ -150,16 +175,16 @@
 
         function edit(obj) {
             var data = dt.row(obj).data();
-            $("#formJurusan").deserialize(data)
+            $("#formUser").deserialize(data)
 
             method = 'POST';
-            formUrl= "{{ route('jurusan.update') }}";
+            formUrl= "{{ route('user.update') }}";
 
         }
 
 
 
-        $("#formJurusan").submit(function(e) {
+        $("#formUser").submit(function(e) {
 
             e.preventDefault();
             var formData = new FormData(this);
@@ -211,7 +236,7 @@
                                 .then((result) => {
                                     if (result.isConfirmed) {
                                         $.ajax({
-                                            url:  "{{ route('jurusan.destroy', ':id') }}".replace(':id', data.id),
+                                            url:  "{{ route('user.destroy', ':id') }}".replace(':id', data.id),
                                             type: "DELETE",
                                             cache: false,
                                             data: {
