@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Barang Masuk')
+@section('title', 'Master Barang')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -38,9 +38,9 @@
                                                 <th class="text-center">
                                                     #
                                                 </th>
+                                                <th>Kode Barang</th>
                                                 <th>Nama Barang</th>
-                                                <th>Tanggal Barang Masuk</th>
-                                                <th>Jumlah Barang Masuk</th>
+                                                <th>Total Barang</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -57,26 +57,17 @@
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
                             </div>
-                            <form id="formUser" action="" method="method">
+                            <form id="formBarang" action="" method="method">
                                 @csrf
                                 <div class="card-body">
                                     <input type="hidden" name="id">
                                     <div class="form-group">
                                         <label for="catgory_name">Nama Barang</label>
-                                        <select name="barang_id" class="form-control" id="select2">
-                                            @foreach ($barang as $b)
-                                                <option value="{{ $b->id }}">{{ $b->nama_barang }}</option>
-                                            @endforeach
-
-                                        </select>
+                                        <input type="text" name="nama_barang" class="form-control">
                                     </div>
                                     <div class="form-group">
-                                        <label for="catgory_name">Jumlah Barang Masuk</label>
-                                        <input type="number" name="jumlah" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Tanggal Barang Masuk</label>
-                                        <input type="date" name="tanggal_masuk" class="form-control">
+                                        <label for="catgory_name">Satuan</label>
+                                        <input type="text" name="satuan" class="form-control">
                                     </div>
 
                                 </div>
@@ -110,7 +101,7 @@
         var method;
 
         method = 'POST';
-        formUrl = "{{ route('barangMasuk.store') }}"
+        formUrl = "{{ route('barang.store') }}"
 
 
         $(document).ready(function() {
@@ -127,23 +118,23 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getBarangMasuk') }}",
+                    "url": "{{ route('getBarang') }}",
                 },
                 "columns": [{
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "barang",
+                        data: "nama_barang",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "tanggal_masuk",
+                        data: "satuan",
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: "jumlah",
+                        data: "stok",
                         orderable: true,
                         searchable: true
                     },
@@ -172,16 +163,16 @@
 
         function edit(obj) {
             var data = dt.row(obj).data();
-            $("#formUser").deserialize(data)
+            $("#formBarang").deserialize(data)
 
             method = 'POST';
-            formUrl = "{{ route('barangMasuk.update') }}";
+            formUrl = "{{ route('barang.update') }}";
 
         }
 
 
 
-        $("#formUser").submit(function(e) {
+        $("#formBarang").submit(function(e) {
 
             e.preventDefault();
             var formData = new FormData(this);
@@ -233,7 +224,7 @@
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('barangMasuk.destroy', ':id') }}".replace(':id', data.id),
+                            url: "{{ route('barang.destroy', ':id') }}".replace(':id', data.id),
                             type: "DELETE",
                             cache: false,
                             data: {

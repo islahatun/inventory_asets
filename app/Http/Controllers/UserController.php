@@ -68,7 +68,7 @@ class UserController extends Controller
 
 
         $data['user_code'] = random_int(10000, 99999);
-        $data['password'] = Hash::make('Password123');
+        $data['password'] = Hash::make('Password');
 
         $result = User::create($data);
 

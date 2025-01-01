@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\barang;
 use Illuminate\Http\Request;
 use App\Models\barang_keluar;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class BarangKeluarController extends Controller
 {
@@ -13,15 +15,21 @@ class BarangKeluarController extends Controller
      */
     public function index()
     {
-        //
+        $data = [
+            'type_menu' => 'transaksi',
+            'menu'      => 'Barang Keluar',
+            'form'      => 'Form Barang Keluar',
+            'barang'    => barang::all()
+        ];
+        return view('pages.barangKeluar.index', $data);
     }
 
     public function getData(){
         $result  = barang_keluar::all();
 
         return DataTables::of($result)->addIndexColumn()
-        ->addColumn('status', function ($data) {
-            return 'Aktif';
+        ->addColumn('barang', function ($data) {
+            return $data->master_barang->nama_barang;
         })
         ->make(true);
     }
@@ -39,7 +47,38 @@ class BarangKeluarController extends Controller
      */
     public function store(Request $request)
     {
-        //
+                // Validate the request data
+                $data =  $request->validate([
+                    'barang_id'     => 'required',
+                    'jumlah'        => 'required',
+                    'tanggal_keluar' => 'required',
+                ]);
+                $data['user_id']    = Auth::user()->id;
+                $result             = barang_keluar::create($data);
+
+                if ($result) {
+
+                    $barang         = barang::find($request->barang_id);
+                    $barang->stok   = $barang->stok - (int) $request->jumlah;
+                    if ($barang->save()) {
+                        $message = array(
+                            'status' => true,
+                            'message' => 'Data Berhasil di simpan'
+                        );
+                    } else {
+                        $message = array(
+                            'status' => false,
+                            'message' => 'gagal menyimpan data master'
+                        );
+                    }
+                } else {
+                    $message = array(
+                        'status' => false,
+                        'message' => 'Data gagal di simpan'
+                    );
+                }
+
+                echo json_encode($message);
     }
 
     /**

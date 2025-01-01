@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class barang_masuk extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function master_barang()
+    {
+        return $this->belongsTo(barang::class, 'barang_id', 'id');
+    }
 }

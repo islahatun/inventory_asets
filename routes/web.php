@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AsetController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +21,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::redirect('/', '/login');
+Route::get('/login',[AuthController::class,'index'])->name('login');
+Route::post('/login-submit',[AuthController::class,'login'])->name('login-submit');
 
-Route::get('/login',[UserController::class,'login'])->name('login');
-
-// Route::redirect('/', '/dashboard');
 
 // Dashboard
 // Route::get('/dashboard',[dashboardController::class,'index'])->name('dashboard');
@@ -52,7 +54,7 @@ Route::resource('user',UserController::class)->names([
 
 Route::get('/getBarangKeluar', [BarangKeluarController::class, 'getData'])->name('getBarangKeluar');
 Route::post('/updateBarangKeluar', [BarangKeluarController::class, 'update'])->name('barangKeluar.update');
-Route::resource('barang',BarangKeluarController::class)->names([
+Route::resource('barangKeluar',BarangKeluarController::class)->names([
     'index'   => 'barangKeluar.index',
     'create'  => 'barangKeluar.create',
     'store'   => 'barangKeluar.store',
@@ -96,8 +98,19 @@ Route::resource('aset',AsetController::class)->names([
     'destroy' => 'aset.destroy',
 ])->except('update');
 
+Route::get('/getDataPengajuan', [PengajuanController::class, 'getData'])->name('getDataPengajuan');
+Route::post('/updatePengajuan', [PengajuanController::class, 'update'])->name('pengajuan.update');
+Route::resource('pengajuan',PengajuanController::class)->names([
+    'index'   => 'pengajuan.index',
+    'create'  => 'pengajuan.create',
+    'store'   => 'pengajuan.store',
+    'show'    => 'pengajuan.show',
+    'edit'    => 'pengajuan.edit',
+    'destroy' => 'pengajuan.destroy',
+])->except('update');
 
-Route::redirect('/', '/dashboard-general-dashboard');
+
+// Route::redirect('/', '/dashboard-general-dashboard');
 
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {

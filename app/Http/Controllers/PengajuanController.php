@@ -34,8 +34,18 @@ class PengajuanController extends Controller
 
 
         return DataTables::of($result)->addIndexColumn()
+        ->addColumn('nama_barang', function ($data) {
+            return $data->barang->nama_barang;
+        })
         ->addColumn('status', function ($data) {
-            return 'Aktif';
+            if($data->status == 1){
+                $result = 'Pengajuan';
+            }else if($data->status == 2){
+                $result = 'Disetujui';
+            }else{
+                $result = 'Ditolak';
+            }
+            return $result;
         })
         ->make(true);
     }
@@ -60,6 +70,7 @@ class PengajuanController extends Controller
         ]);
 
         $data['user_id']    = Auth::user()->id;
+        $data['status']    = 1;
 
         $result = pengajuan::create($data);
 

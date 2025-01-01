@@ -10,4 +10,8 @@ class barang_keluar extends Model
 {
     use HasFactory,SoftDeletes;
     protected $guarded = ['id'];
+
+    public function master_barang(){
+        return $this->belongsTo(barang::class,'barang_id','id');
+    }
 }

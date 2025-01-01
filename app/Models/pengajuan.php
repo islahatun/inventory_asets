@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class pengajuan extends Model
 {
     use HasFactory;
+    protected $guarded =['id'];
+
+    public function barang(){
+        return $this->belongsTo(barang::class,'id_barang','id');
+    }
 }

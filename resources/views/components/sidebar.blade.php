@@ -50,17 +50,21 @@
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Transaksi</span></a>
                 <ul class="dropdown-menu">
-                    <li class="{{ Request::is('bootstrap-alert') ? 'active' : '' }}">
+                    <li class="{{ Request::is('barangMasuk') ? 'active' : '' }}">
                         <a class="nav-link"
-                            href="{{ url('bootstrap-alert') }}">Barang Masuk</a>
+                            href="{{ url('barangMasuk') }}">Barang Masuk</a>
                     </li>
-                    <li class="{{ Request::is('bootstrap-badge') ? 'active' : '' }}">
+                    <li class="{{ Request::is('barangKeluar') ? 'active' : '' }}">
                         <a class="nav-link"
-                            href="{{ url('bootstrap-badge') }}">Barang Keluar</a>
+                            href="{{ url('barangKeluar') }}">Barang Keluar</a>
                     </li>
-                    <li class="{{ Request::is('bootstrap-breadcrumb') ? 'active' : '' }}">
+                    <li class="{{ Request::is('pengajuan') ? 'active' : '' }}">
                         <a class="nav-link"
-                            href="{{ url('bootstrap-breadcrumb') }}">Aset Divisi</a>
+                            href="{{ url('pengajuan') }}">Pengajuan Barang Divisi</a>
+                    </li>
+                    <li class="{{ Request::is('aset') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('aset') }}">Aset Divisi</a>
                     </li>
 
                 </ul>

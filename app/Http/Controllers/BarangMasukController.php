@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\barang;
 use App\Models\barang_masuk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class BarangMasukController extends Controller
@@ -20,17 +21,18 @@ class BarangMasukController extends Controller
             'form'      => 'Form Barang Masuk',
             'barang'    => barang::all()
         ];
-        return view('pages.barangMasuk.index',$data);
+        return view('pages.barangMasuk.index', $data);
     }
 
-    public function getData(){
-        $result  = barang_masuk::all();
+    public function getData()
+    {
+        $result  = barang_masuk::with('master_barang')->get();
 
         return DataTables::of($result)->addIndexColumn()
-        ->addColumn('status', function ($data) {
-            return 'Aktif';
-        })
-        ->make(true);
+            ->addColumn('barang', function ($data) {
+                return $data->master_barang->nama_barang;
+            })
+            ->make(true);
     }
 
     /**
@@ -48,20 +50,29 @@ class BarangMasukController extends Controller
     {
         // Validate the request data
         $data =  $request->validate([
-            'barang_id' => 'required',
-            'user_id'=> 'required',
-            'jumlah'    => 'required',
-            'tanggal_masuk'=> 'required',
+            'barang_id'     => 'required',
+            'jumlah'        => 'required',
+            'tanggal_masuk' => 'required',
         ]);
+        $data['user_id']    = Auth::user()->id;
+        $result             = barang_masuk::create($data);
 
-        $result = barang_masuk::create($data);
+        if ($result) {
 
-        if($result){
-            $message = array(
-                'status' => true,
-                'message' => 'Data Berhasil di simpan'
-            );
-        }else{
+            $barang         = barang::find($request->barang_id);
+            $barang->stok   = $barang->stok + (int) $request->jumlah;
+            if ($barang->save()) {
+                $message = array(
+                    'status' => true,
+                    'message' => 'Data Berhasil di simpan'
+                );
+            } else {
+                $message = array(
+                    'status' => false,
+                    'message' => 'gagal menyimpan data master'
+                );
+            }
+        } else {
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal di simpan'
@@ -92,34 +103,34 @@ class BarangMasukController extends Controller
      */
     public function update(Request $request, barang_masuk $barang_masuk)
     {
-                 // Validate the request data
-                 $request->validate([
-                   'barang_id' => 'required',
-                    'user_id'=> 'required',
-                    'jumlah'    => 'required',
-                    'tanggal_masuk'=> 'required',
-                ]);
+        // Validate the request data
+        $request->validate([
+            'barang_id' => 'required',
+            'user_id' => 'required',
+            'jumlah'    => 'required',
+            'tanggal_masuk' => 'required',
+        ]);
 
-                // Update the category with the new data
-                $barangMasuk = barang_masuk::find($request->id);
-                $barangMasuk->barang_id = $request->barang_id;
-                $barangMasuk->user_id = $request->user_id;
-                $barangMasuk->jumlah = $request->jumlah;
-                $barangMasuk->tanggal_masuk = $request->tanggal_masuk;
+        // Update the category with the new data
+        $barangMasuk = barang_masuk::find($request->id);
+        $barangMasuk->barang_id = $request->barang_id;
+        $barangMasuk->user_id = $request->user_id;
+        $barangMasuk->jumlah = $request->jumlah;
+        $barangMasuk->tanggal_masuk = $request->tanggal_masuk;
 
-                if($barangMasuk->save()){
-                    $message = array(
-                        'status' => true,
-                        'message' => 'Data Berhasil di ubah'
-                    );
-                }else{
-                    $message = array(
-                        'status' => false,
-                        'message' => 'Data gagal di ubah'
-                    );
-                }
+        if ($barangMasuk->save()) {
+            $message = array(
+                'status' => true,
+                'message' => 'Data Berhasil di ubah'
+            );
+        } else {
+            $message = array(
+                'status' => false,
+                'message' => 'Data gagal di ubah'
+            );
+        }
 
-                echo json_encode($message);
+        echo json_encode($message);
     }
 
     /**
@@ -128,12 +139,12 @@ class BarangMasukController extends Controller
     public function destroy(barang_masuk $barang_masuk)
     {
 
-        if($barang_masuk->delete()){
+        if ($barang_masuk->delete()) {
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil dihapus'
             );
-        }else{
+        } else {
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal dihapus'

@@ -39,8 +39,8 @@
                                                     #
                                                 </th>
                                                 <th>Nama Barang</th>
-                                                <th>Tanggal Barang Masuk</th>
-                                                <th>Jumlah Barang Masuk</th>
+                                                <th>Tanggal Barang Keluar</th>
+                                                <th>Jumlah Barang Keluar</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -71,12 +71,12 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="catgory_name">Jumlah Barang Masuk</label>
+                                        <label for="catgory_name">Jumlah Barang Keluar</label>
                                         <input type="number" name="jumlah" class="form-control">
                                     </div>
                                     <div class="form-group">
-                                        <label for="catgory_name">Tanggal Barang Masuk</label>
-                                        <input type="date" name="tanggal_masuk" class="form-control">
+                                        <label for="catgory_name">Tanggal Barang Keluar</label>
+                                        <input type="date" name="tanggal_keluar" class="form-control">
                                     </div>
 
                                 </div>
@@ -110,7 +110,7 @@
         var method;
 
         method = 'POST';
-        formUrl = "{{ route('barangMasuk.store') }}"
+        formUrl = "{{ route('barangKeluar.store') }}"
 
 
         $(document).ready(function() {
@@ -127,7 +127,7 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getBarangMasuk') }}",
+                    "url": "{{ route('getBarangKeluar') }}",
                 },
                 "columns": [{
                         data: "DT_RowIndex",
@@ -138,7 +138,7 @@
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "tanggal_masuk",
+                        data: "tanggal_keluar",
                         orderable: true,
                         searchable: true
                     },
@@ -175,7 +175,7 @@
             $("#formUser").deserialize(data)
 
             method = 'POST';
-            formUrl = "{{ route('barangMasuk.update') }}";
+            formUrl = "{{ route('barangKeluar.update') }}";
 
         }
 
@@ -233,7 +233,7 @@
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('barangMasuk.destroy', ':id') }}".replace(':id', data.id),
+                            url: "{{ route('barangKeluar.destroy', ':id') }}".replace(':id', data.id),
                             type: "DELETE",
                             cache: false,
                             data: {

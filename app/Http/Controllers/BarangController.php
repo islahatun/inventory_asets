@@ -17,7 +17,6 @@ class BarangController extends Controller
             'type_menu' => 'master',
             'menu'      => 'Barang',
             'form'      => 'Form Barang',
-            'barang'    => barang::all()
         ];
         return view('pages.barang.index',$data);
     }
@@ -45,13 +44,14 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
+        $lastKode = barang::max('kode_barang');
         // Validate the request data
         $data =  $request->validate([
             'nama_barang' => 'required',
             'satuan'=> 'required',
         ]);
 
-        $data['kode_barang']    =
+        $data['kode_barang']    = $this->generateKodeBarang();
 
         $result = barang::create($data);
 
@@ -91,7 +91,31 @@ class BarangController extends Controller
      */
     public function update(Request $request, barang $barang)
     {
-        //
+        // Validate the request data
+        $request->validate([
+            'nama_barang'   => 'required',
+             'satuan'       => 'required',
+
+         ]);
+
+         // Update the category with the new data
+         $barang = barang::find($request->id);
+         $barang->nama_barang = $request->nama_barang;
+         $barang->satuan = $request->satuan;
+
+         if($barang->save()){
+             $message = array(
+                 'status' => true,
+                 'message' => 'Data Berhasil di ubah'
+             );
+         }else{
+             $message = array(
+                 'status' => false,
+                 'message' => 'Data gagal di ubah'
+             );
+         }
+
+         echo json_encode($message);
     }
 
     /**
@@ -99,6 +123,34 @@ class BarangController extends Controller
      */
     public function destroy(barang $barang)
     {
-        //
+        if($barang->delete()){
+            $message = array(
+                'status' => true,
+                'message' => 'Data Berhasil dihapus'
+            );
+        }else{
+            $message = array(
+                'status' => false,
+                'message' => 'Data gagal dihapus'
+            );
+        }
+
+        echo json_encode($message);
+    }
+
+    function generateKodeBarang() {
+        // Cari kode barang terakhir
+        $lastKode = Barang::max('kode_barang');
+
+        if ($lastKode) {
+            // Ambil angka dari kode terakhir dan tambahkan 1
+            $lastNumber = (int) substr($lastKode, 4); // Misal: 'BRG-0001' -> 1
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1; // Jika belum ada data
+        }
+
+        // Format kode barang baru
+        return 'BRG-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 }
