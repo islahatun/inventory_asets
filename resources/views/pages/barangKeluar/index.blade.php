@@ -25,7 +25,7 @@
             <div class="section-body">
 
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-8">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $menu }}</h4>
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
@@ -159,8 +159,8 @@
                     {
                         "render": function(data, type, row, meta) {
                             var result =
-                                `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
-                            result +=
+                            //     `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
+                            // result +=
                                 `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },

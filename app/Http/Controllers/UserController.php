@@ -61,7 +61,7 @@ class UserController extends Controller
     {
          // Validate the request data
         $data =  $request->validate([
-            'departement' => 'required',
+            'departement_id' => 'required',
             'email'=> 'required',
             'role'=> 'required',
         ]);
@@ -110,14 +110,14 @@ class UserController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'departement' => 'required',
+            'departement_id' => 'required',
             'email'=> 'required',
             'role'=> 'required',
         ]);
 
         // Update the category with the new data
         $user = User::find($request->id);
-        $user->departement = $request->departement;
+        $user->departement_id = $request->departement_id;
         $user->email = $request->email;
         $user->role = $request->role;
 

@@ -40,6 +40,7 @@
                                                 </th>
                                                 <th>Kode Barang</th>
                                                 <th>Nama Barang</th>
+                                                <th>Satuan Barang</th>
                                                 <th>Total Barang</th>
                                                 <th>Action</th>
                                             </tr>
@@ -124,7 +125,12 @@
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
-                    }, {
+                    },{
+                        data: "kode_barang",
+                        orderable: true,
+                        searchable: true
+                    },
+                     {
                         data: "nama_barang",
                         orderable: true,
                         searchable: true
@@ -155,7 +161,7 @@
                                 `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },
-                        "targets": 4
+                        "targets": 5
                     },
                 ]
             });

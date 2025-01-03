@@ -160,10 +160,14 @@
 
                     {
                         "render": function(data, type, row, meta) {
-                            var result =
+                            var result = '';
+                            if(row.alasan == null){
+                                result =
                                 `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
                             result +=
                                 `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
+                            }
+
                             return result;
                         },
                         "targets": 5

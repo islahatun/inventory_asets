@@ -55,7 +55,35 @@ class PengajuanController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'type_menu' => 'transaksi',
+            'menu'      => 'Acc Pengajuan',
+            'form'      => 'Form Acc Pengajuan',
+
+        ];
+        return view('pages.pengajuan.acc',$data);
+    }
+
+    public function getDataAcc(){
+
+        $result = Pengajuan::selectRaw('CAST(created_at AS DATE) as tanggal_pengajuan, user_id, count(id) as jumlah_id')
+        ->with('user.departement')
+        ->groupByRaw('CAST(created_at AS DATE), user_id')
+        ->get();
+
+    return DataTables::of($result)
+        ->addIndexColumn()
+        ->addColumn('divisi', function ($data) {
+            return $data->user->departement->name_departement ?? '-';
+        })
+        ->addColumn('tanggal_pengajuan', function ($data) {
+            return $data->tanggal_pengajuan;
+        })
+        ->addColumn('jumlah', function ($data) {
+            return $data->jumlah_id ?? 0;
+        })
+
+        ->make(true);
     }
 
     /**
@@ -100,9 +128,17 @@ class PengajuanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(pengajuan $pengajuan)
+    public function edit($user_id,$tanggal_pengajuan)
     {
-        //
+        $data = [
+            'type_menu' => 'transaksi',
+            'menu'      => ' Detail Acc Pengajuan',
+            'form'      => 'Form Deatil Acc Pengajuan',
+            'user_id'   => $user_id,
+            'tanggal_pengajuan' =>$tanggal_pengajuan
+
+        ];
+        return view('pages.pengajuan.detail_acc',$data);
     }
 
     /**
@@ -136,6 +172,57 @@ class PengajuanController extends Controller
         echo json_encode($message);
     }
 
+    public function getDetailData($user_id,$tanggal_pengajuan){
+
+
+
+        $result = Pengajuan::whereDate('created_at',$tanggal_pengajuan)->where('user_id',$user_id)
+        ->get();
+
+        return DataTables::of($result)->addIndexColumn()
+        ->addColumn('nama_barang', function ($data) {
+            return $data->barang->nama_barang;
+        })
+        ->addColumn('status', function ($data) {
+            if($data->status == 1){
+                $result = 'Pengajuan';
+            }else if($data->status == 2){
+                $result = 'Disetujui';
+            }else{
+                $result = 'Ditolak';
+            }
+            return $result;
+        })
+        ->make(true);
+    }
+
+    public function acc(Request $request)
+    {
+         // Validate the request data
+         $request->validate([
+            'status' => 'required|string|max:255',
+        ]);
+
+        // Update the category with the new data
+        $pengajuan = pengajuan::find($request->id);
+        $pengajuan->status = $request->status;
+        $pengajuan->alasan = $request->alasan;
+
+        if($pengajuan->save()){
+            $message = array(
+                'status' => true,
+                'message' => 'Data Berhasil di ubah'
+            );
+        }else{
+            $message = array(
+                'status' => false,
+                'message' => 'Data gagal di ubah'
+            );
+        }
+
+        echo json_encode($message);
+    }
+
     public function validasi(Request $request){
 
          // Validate the request data
@@ -145,7 +232,7 @@ class PengajuanController extends Controller
 
         // Update the category with the new data
         $pengajuan = pengajuan::find($request->id);
-        $pengajuan->ststus = $request->ststus;
+        $pengajuan->status = $request->status;
         $pengajuan->alasan = $request->alasan;
 
         if($pengajuan->save()){

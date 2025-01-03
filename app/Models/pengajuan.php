@@ -13,4 +13,8 @@ class pengajuan extends Model
     public function barang(){
         return $this->belongsTo(barang::class,'id_barang','id');
     }
+
+    public function user(){
+        return $this->belongsTo(user::class,'user_id','id');
+    }
 }

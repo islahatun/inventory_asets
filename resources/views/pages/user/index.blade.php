@@ -63,7 +63,7 @@
                                     <input type="hidden" name="id">
                                     <div class="form-group">
                                         <label for="catgory_name">Nama Divisi</label>
-                                        <select name="departement" class="form-control" id="select2">
+                                        <select name="departement_id" class="form-control" id="select2">
                                             @foreach ($divisi as $d )
                                             <option value="{{ $d->id }}">{{ $d->name_departement }}</option>
                                             @endforeach

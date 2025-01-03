@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Barang Masuk')
+@section('title', 'Master Barang')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -25,7 +25,7 @@
             <div class="section-body">
 
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $menu }}</h4>
@@ -38,9 +38,9 @@
                                                 <th class="text-center">
                                                     #
                                                 </th>
-                                                <th>Nama Barang</th>
-                                                <th>Tanggal Barang Masuk</th>
-                                                <th>Jumlah Barang Masuk</th>
+                                                <th>Nama Divisi</th>
+                                                <th>Tanggal Pengajuan</th>
+                                                <th>Total Barang</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -50,40 +50,6 @@
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>{{ $form }}</h4>
-                            </div>
-                            <form id="formUser" action="" method="method">
-                                @csrf
-                                <div class="card-body">
-                                    <input type="hidden" name="id">
-                                    <div class="form-group">
-                                        <label for="catgory_name">Nama Barang</label>
-                                        <select name="barang_id" class="form-control" id="select2">
-                                            @foreach ($barang as $b)
-                                                <option value="{{ $b->id }}">{{ $b->nama_barang }}</option>
-                                            @endforeach
-
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Jumlah Barang Masuk</label>
-                                        <input type="number" name="jumlah" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Tanggal Barang Masuk</label>
-                                        <input type="date" name="tanggal_masuk" class="form-control">
-                                    </div>
-
-                                </div>
-                                <div class="card-footer">
-                                    <button class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -110,7 +76,7 @@
         var method;
 
         method = 'POST';
-        formUrl = "{{ route('barangMasuk.store') }}"
+        formUrl = "{{ route('pengajuan.store') }}"
 
 
         $(document).ready(function() {
@@ -127,18 +93,18 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getBarangMasuk') }}",
+                    "url": "{{ route('getDataAcc') }}",
                 },
                 "columns": [{
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "barang",
+                        data: "divisi",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "tanggal_masuk",
+                        data: "tanggal_pengajuan",
                         orderable: true,
                         searchable: true
                     },
@@ -159,9 +125,9 @@
                     {
                         "render": function(data, type, row, meta) {
                             var result =
-                                //     `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
-                                // result +=
-                                `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
+                                `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Detail</button> &nbsp;`;
+                            // result +=
+                            //     `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },
                         "targets": 4
@@ -172,16 +138,15 @@
 
         function edit(obj) {
             var data = dt.row(obj).data();
-            $("#formUser").deserialize(data)
-
-            method = 'POST';
-            formUrl = "{{ route('barangMasuk.update') }}";
+            formUrl = "{{ route('detailAcc', ['user_id' => ':user_id', 'tgl' => ':tgl']) }}";
+    formUrl = formUrl.replace(':user_id', data.user_id).replace(':tgl', data.tanggal_pengajuan);
+            window.location.href = formUrl;
 
         }
 
 
 
-        $("#formUser").submit(function(e) {
+        $("#formBarang").submit(function(e) {
 
             e.preventDefault();
             var formData = new FormData(this);
@@ -233,7 +198,7 @@
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('barangMasuk.destroy', ':id') }}".replace(':id', data.id),
+                            url: "{{ route('pengajuan.destroy', ':id') }}".replace(':id', data.id),
                             type: "DELETE",
                             cache: false,
                             data: {

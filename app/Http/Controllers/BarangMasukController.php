@@ -136,15 +136,22 @@ class BarangMasukController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(barang_masuk $barang_masuk)
+    public function destroy($id)
     {
 
-        if ($barang_masuk->delete()) {
+        $barang_masuk  = barang_masuk::find($id);
+        $barang         = barang::where('id',$barang_masuk->barang_id)->first();
+        $barang->stok   = $barang->stok - $barang_masuk->jumlah;
+        $barang->save();
+
+        $delete         = barang_masuk::where('id',$id)->delete();
+
+        if($delete){
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil dihapus'
             );
-        } else {
+        }else{
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal dihapus'

@@ -53,11 +53,30 @@ class BarangKeluarController extends Controller
                     'jumlah'        => 'required',
                     'tanggal_keluar' => 'required',
                 ]);
+
+                $barang         = barang::find($request->barang_id);
+
+                if($barang->stock ==0){
+                    $message = array(
+                        'status' => false,
+                        'message' => 'Stok barang kosong'
+                    );
+                    return json_encode($message);
+                }
+
+                if(($barang->stok - (int) $request->jumlah) < 0){
+                    $message = array(
+                        'status' => false,
+                        'message' => 'Stok barang Kurang'
+                    );
+                    return json_encode($message);
+                }
+
+
                 $data['user_id']    = Auth::user()->id;
                 $result             = barang_keluar::create($data);
 
                 if ($result) {
-
                     $barang         = barang::find($request->barang_id);
                     $barang->stok   = $barang->stok - (int) $request->jumlah;
                     if ($barang->save()) {
@@ -108,9 +127,17 @@ class BarangKeluarController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(barang_keluar $barang_keluar)
+    public function destroy($id)
     {
-        if($barang_keluar->delete()){
+
+        $barang_keluar  = barang_keluar::find($id);
+        $barang         = barang::where('id',$barang_keluar->barang_id)->first();
+        $barang->stok   = $barang->stok + $barang_keluar->jumlah;
+        $barang->save();
+
+        $delete         = barang_keluar::where('id',$id)->delete();
+
+        if($delete){
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil dihapus'

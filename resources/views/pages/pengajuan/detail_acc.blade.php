@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Barang Masuk')
+@section('title', 'Master Barang')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -25,12 +25,14 @@
             <div class="section-body">
 
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-6">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $menu }}</h4>
                             </div>
                             <div class="card-body">
+                                <input type="hidden" id="user_id" value="{{ $user_id }}">
+                                <input type="hidden" id="tgl" value="{{ $tanggal_pengajuan }}">
                                 <div class="table-responsive">
                                     <table class="table-striped table" id="table-1">
                                         <thead>
@@ -39,8 +41,9 @@
                                                     #
                                                 </th>
                                                 <th>Nama Barang</th>
-                                                <th>Tanggal Barang Masuk</th>
-                                                <th>Jumlah Barang Masuk</th>
+                                                <th>Total Barang</th>
+                                                <th>Status Pengajuan</th>
+                                                <th>Alasan</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -52,31 +55,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
                             </div>
-                            <form id="formUser" action="" method="method">
+                            <form id="formBarang" action="" method="method">
                                 @csrf
                                 <div class="card-body">
                                     <input type="hidden" name="id">
                                     <div class="form-group">
                                         <label for="catgory_name">Nama Barang</label>
-                                        <select name="barang_id" class="form-control" id="select2">
-                                            @foreach ($barang as $b)
-                                                <option value="{{ $b->id }}">{{ $b->nama_barang }}</option>
-                                            @endforeach
+                                        <input type="text" name="nama_barang" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="catgory_name">Status</label>
+                                        <select name="status" class="form-control" id="select2">
+                                            <option value="2">Disetujui</option>
+                                            <option value="3">Ditolak</option>
 
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="catgory_name">Jumlah Barang Masuk</label>
-                                        <input type="number" name="jumlah" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Tanggal Barang Masuk</label>
-                                        <input type="date" name="tanggal_masuk" class="form-control">
+                                        <label for="catgory_name">Alasan</label>
+                                        <input type="text" name="alasan" class="form-control" required>
                                     </div>
 
                                 </div>
@@ -109,11 +111,12 @@
         var formUrl;
         var method;
 
-        method = 'POST';
-        formUrl = "{{ route('barangMasuk.store') }}"
-
-
         $(document).ready(function() {
+
+            var user_id = $('#user_id').val();
+            var tgl     = $('#tgl').val();
+            var formUrl = "{{ route('getDetailDataAcc', ['user_id' => ':user_id', 'tgl' => ':tgl']) }}";
+            formUrl = formUrl.replace(':user_id', user_id).replace(':tgl', tgl);
 
             $.ajaxSetup({
                 headers: {
@@ -127,23 +130,28 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getBarangMasuk') }}",
+                    "url": formUrl,
                 },
                 "columns": [{
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "barang",
+                        data: "nama_barang",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "tanggal_masuk",
+                        data: "jumlah",
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: "jumlah",
+                        data: "status",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "alasan",
                         orderable: true,
                         searchable: true
                     },
@@ -159,12 +167,12 @@
                     {
                         "render": function(data, type, row, meta) {
                             var result =
-                                //     `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
-                                // result +=
-                                `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
+                                `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
+                            // result +=
+                            //     `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },
-                        "targets": 4
+                        "targets": 5
                     },
                 ]
             });
@@ -172,16 +180,16 @@
 
         function edit(obj) {
             var data = dt.row(obj).data();
-            $("#formUser").deserialize(data)
+            $("#formBarang").deserialize(data)
 
             method = 'POST';
-            formUrl = "{{ route('barangMasuk.update') }}";
+            formUrl = "{{ route('acc.update') }}";
 
         }
 
 
 
-        $("#formUser").submit(function(e) {
+        $("#formBarang").submit(function(e) {
 
             e.preventDefault();
             var formData = new FormData(this);
@@ -218,49 +226,5 @@
             });
         });
 
-        function remove(obj) {
-
-            let data = dt.row(obj).data();
-            Swal
-                .fire({
-                    title: 'Apakah anda yakin.?',
-                    text: "Data yang dihapus tidak dapat dikembalikan!",
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya!'
-                })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('barangMasuk.destroy', ':id') }}".replace(':id', data.id),
-                            type: "DELETE",
-                            cache: false,
-                            data: {
-                                "_token": "{{ csrf_token() }}"
-                            },
-                            success: function(data, textStatus, jqXHR) {
-                                let view = jQuery.parseJSON(data);
-                                if (view.status == true) {
-                                    toastr.success(view.message);
-                                    setTimeout(function() {
-                                        location.reload();
-                                    }, 500);
-                                } else {
-                                    toastr.error(view.message);
-                                    setTimeout(function() {
-                                        location.reload();
-                                    }, 500);
-                                }
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                toastr.error('Data gagal dihapus.');
-                            }
-                        });
-                    }
-                })
-
-
-        }
     </script>
 @endpush
