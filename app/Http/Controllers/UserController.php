@@ -41,7 +41,7 @@ class UserController extends Controller
         })
         ->addColumn('departement', function ($data) {
 
-            return $data->departement;
+            return $data->departement->name_departement;
         })
         ->make(true);
     }

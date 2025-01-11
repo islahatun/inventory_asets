@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\barang;
 use App\Models\barang_masuk;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Auth;
 
 class BarangMasukController extends Controller
 {
@@ -24,9 +25,22 @@ class BarangMasukController extends Controller
         return view('pages.barangMasuk.index', $data);
     }
 
-    public function getData()
+    public function getData(Request $request)
     {
-        $result  = barang_masuk::with('master_barang')->get();
+
+        $tgl_awal   = $request->tgl_awal;
+        $tgl_akhir   = $request->tgl_akhir;
+
+
+        $query  = barang_masuk::query();
+        $result = $query->with('master_barang');
+
+        if($tgl_awal != null && $tgl_akhir != null ){
+            $result =$result->whereBetween('tanggal_masuk',[$tgl_awal,$tgl_akhir]);
+        }
+
+        $result = $result->get();
+
 
         return DataTables::of($result)->addIndexColumn()
             ->addColumn('barang', function ($data) {
@@ -40,7 +54,12 @@ class BarangMasukController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'type_menu' => 'report',
+            'menu'      => 'Laporan Barang Masuk',
+            'form'      => 'Form Barang Masuk',
+        ];
+        return view('pages.barangMasuk.index_print', $data);
     }
 
     /**
@@ -159,5 +178,23 @@ class BarangMasukController extends Controller
         }
 
         echo json_encode($message);
+    }
+    public function print($tgl_awal = 0, $tgl_akhir= 0)
+    {
+        $query = barang_masuk::query();
+        $barang_masuk  = $query->with('master_barang');
+        if($tgl_awal != 0 && $tgl_akhir != 0){
+            $barang_masuk = $barang_masuk->whereBetween('tanggal_masuk',[$tgl_awal,$tgl_akhir]);
+        }
+        $barang_masuk = $barang_masuk->get();
+
+        $data = [
+            'logo' => asset('img/logo-cilegon'),
+            'barang'    => $barang_masuk
+        ];
+
+        // Render view ke dalam PDF
+        $pdf = Pdf::loadView('pages.barangMasuk.print', $data);
+        return $pdf->download('laporan-barang-masuk.pdf');
     }
 }

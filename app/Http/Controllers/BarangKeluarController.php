@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\barang;
 use Illuminate\Http\Request;
 use App\Models\barang_keluar;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +25,19 @@ class BarangKeluarController extends Controller
         return view('pages.barangKeluar.index', $data);
     }
 
-    public function getData(){
-        $result  = barang_keluar::all();
+    public function getData(Request $request){
+        $tgl_awal   = $request->tgl_awal;
+        $tgl_akhir   = $request->tgl_akhir;
+
+
+        $query  = barang_keluar::query();
+        $result = $query->with('master_barang');
+
+        if($tgl_awal != null && $tgl_akhir != null ){
+            $result =$result->whereBetween('tanggal_keluar',[$tgl_awal,$tgl_akhir]);
+        }
+
+        $result = $result->get();
 
         return DataTables::of($result)->addIndexColumn()
         ->addColumn('barang', function ($data) {
@@ -39,7 +51,12 @@ class BarangKeluarController extends Controller
      */
     public function create()
     {
-        //
+        $data = [
+            'type_menu' => 'report',
+            'menu'      => 'Laporan Barang Keluar',
+            'form'      => 'Form Barang Keluar',
+        ];
+        return view('pages.barangKeluar.index_print', $data);
     }
 
     /**
@@ -56,7 +73,7 @@ class BarangKeluarController extends Controller
 
                 $barang         = barang::find($request->barang_id);
 
-                if($barang->stock ==0){
+                if($barang->stok ==0){
                     $message = array(
                         'status' => false,
                         'message' => 'Stok barang kosong'
@@ -150,5 +167,25 @@ class BarangKeluarController extends Controller
         }
 
         echo json_encode($message);
+    }
+
+    public function print($tgl_awal = 0, $tgl_akhir= 0)
+    {
+
+        $query = barang_keluar::query();
+        $barang_keluar  = $query->with('master_barang');
+        if($tgl_awal != 0 && $tgl_akhir != 0){
+            $barang_keluar = $barang_keluar->whereBetween('tanggal_keluar',[$tgl_awal,$tgl_akhir]);
+        }
+        $barang_keluar = $barang_keluar->get();
+
+        $data = [
+            'logo' => asset('img/logo-cilegon'),
+            'barang'    => $barang_keluar
+        ];
+
+        // Render view ke dalam PDF
+        $pdf = Pdf::loadView('pages.barangKeluar.print', $data);
+        return $pdf->download('laporan-barang-Keluar.pdf');
     }
 }

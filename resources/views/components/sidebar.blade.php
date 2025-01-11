@@ -73,7 +73,7 @@
 
                 </ul>
             </li>
-            <li class="nav-item dropdown {{ $type_menu === 'transaksi' ? 'active' : '' }}">
+            <li class="nav-item dropdown {{ $type_menu === 'report' ? 'active' : '' }}">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Report</span></a>
                 <ul class="dropdown-menu">
@@ -89,13 +89,9 @@
                         <a class="nav-link"
                             href="{{ url('reportBarang') }}">Barang</a>
                     </li>
-                    <li class="{{ Request::is('acc') ? 'active' : '' }}">
+                    <li class="{{ Request::is('reportPengajuan') ? 'active' : '' }}">
                         <a class="nav-link"
-                            href="{{ url('acc') }}">Acc Pengajuan Barang</a>
-                    </li>
-                    <li class="{{ Request::is('aset') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('aset') }}">Aset Divisi</a>
+                            href="{{ url('reportPengajuan') }}">Acc Pengajuan Barang</a>
                     </li>
 
                 </ul>

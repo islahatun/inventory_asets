@@ -53,10 +53,11 @@ Route::resource('user',UserController::class)->names([
 
 
 Route::get('/getBarangKeluar', [BarangKeluarController::class, 'getData'])->name('getBarangKeluar');
+Route::get('/reportBarangKeluar', [BarangKeluarController::class, 'create'])->name('reportBarangKeluar');
+Route::get('/printBarangKeluar/{tgl_awal}/{tgl_akhir}', [BarangKeluarController::class, 'print'])->name('printBarangKeluar');
 Route::post('/updateBarangKeluar', [BarangKeluarController::class, 'update'])->name('barangKeluar.update');
 Route::resource('barangKeluar',BarangKeluarController::class)->names([
     'index'   => 'barangKeluar.index',
-    'create'  => 'barangKeluar.create',
     'store'   => 'barangKeluar.store',
     'show'    => 'barangKeluar.show',
     'edit'    => 'barangKeluar.edit',
@@ -64,10 +65,11 @@ Route::resource('barangKeluar',BarangKeluarController::class)->names([
 ])->except('update');
 
 Route::get('/getBarangMasuk', [BarangMasukController::class, 'getData'])->name('getBarangMasuk');
+Route::get('/reportBarangMasuk', [BarangMasukController::class, 'create'])->name('reportBarangMasuk');
+Route::get('/printBarangMasuk/{tgl_awal}/{tgl_akhir}', [BarangMasukController::class, 'print'])->name('printBarangMasuk');
 Route::post('/updateBarangMasuk', [BarangMasukController::class, 'update'])->name('barangMasuk.update');
 Route::resource('barangMasuk',BarangMasukController::class)->names([
     'index'   => 'barangMasuk.index',
-    'create'  => 'barangMasuk.create',
     'store'   => 'barangMasuk.store',
     'show'    => 'barangMasuk.show',
     'edit'    => 'barangMasuk.edit',
@@ -75,10 +77,11 @@ Route::resource('barangMasuk',BarangMasukController::class)->names([
 ])->except('update');
 
 Route::get('/getBarang', [BarangController::class, 'getData'])->name('getBarang');
+Route::get('/reportBarang', [BarangController::class, 'create'])->name('reportBarang');
+Route::get('/printBarang/{tgl_awal}/{tgl_akhir}', [BarangController::class, 'print'])->name('printBarang');
 Route::post('/updateBarang', [BarangController::class, 'update'])->name('barang.update');
 Route::resource('barang',BarangController::class)->names([
     'index'   => 'barang.index',
-    'create'  => 'barang.create',
     'store'   => 'barang.store',
     'show'    => 'barang.show',
     'edit'    => 'barang.edit',
@@ -91,7 +94,6 @@ Route::get('/getDataAset', [AsetController::class, 'getData'])->name('getDataAse
 Route::post('/updateAset', [AsetController::class, 'update'])->name('aset.update');
 Route::resource('aset',AsetController::class)->names([
     'index'   => 'aset.index',
-    'create'  => 'aset.create',
     'store'   => 'aset.store',
     'show'    => 'aset.show',
     'edit'    => 'aset.edit',
@@ -112,6 +114,8 @@ Route::resource('pengajuan',PengajuanController::class)->names([
     'show'    => 'pengajuan.show',
     'destroy' => 'pengajuan.destroy',
 ])->except('update','create','edit');
+
+Route::get('/reportPengajuan', [PengajuanController::class, 'edit'])->name('reportPengajuan');
 
 
 // Route::redirect('/', '/dashboard-general-dashboard');
