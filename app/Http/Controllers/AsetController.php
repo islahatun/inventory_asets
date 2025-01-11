@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\aset;
+use App\Models\departement;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
@@ -14,24 +16,39 @@ class AsetController extends Controller
      */
     public function index()
     {
+        if(Auth::user()->role !=1){
+            $pages  = 'pages.aset.index_admin';
+            $form   = 'Divisi';
+        }else{
+            $pages  = 'pages.aset.index';
+            $form   = 'Form Aset';
+        }
         $data = [
             'type_menu' => 'transaksi',
             'menu'      => 'Aset',
-            'form'      => 'Form Aset',
-            'barang'    => aset::all()
+            'form'      => $form,
+            'barang'    => aset::all(),
+            'divisi'    => departement::all()
         ];
-        return view('pages.aset.index',$data);
+        return view($pages,$data);
     }
 
-    public function getData(){
+    public function getData(Request $request){
 
         if(Auth::user()->role == 1){
             $result  = aset::where('user_id',Auth::user()->id)->get();
         }else{
-            $result  = aset::all();
+            $query  = aset::query();
+        if($request->departement_id != null){
+            $user   = User::where('departement_id',$request->departement_id)->first();
+            $user = $user?$user->id:null;
+            $query->where('user_id',$user);
+        }
+        $result =$query->get();
+
         }
 
-
+// dd($result);
         return DataTables::of($result)->addIndexColumn()
         ->addColumn('status', function ($data) {
             return 'Aktif';

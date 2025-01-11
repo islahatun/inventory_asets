@@ -23,7 +23,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/user');
+            return redirect()->intended('/dashboard');
         } else {
             return back()->withErrors([
                 'user_code' => 'The provided credentials do not match our records.',
