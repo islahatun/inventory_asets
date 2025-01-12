@@ -157,7 +157,6 @@
         function filter(){
            var divisi =  $('[name="departement_id"]:checked').val();
 
-           console.log(divisi);
             initialDt(divisi)
         }
     </script>

@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/login');
 Route::get('/login',[AuthController::class,'index'])->name('login');
 Route::post('/login-submit',[AuthController::class,'login'])->name('login-submit');
+Route::post('/logout',[AuthController::class,'logout'])->name('logout');
 
 
 // Dashboard

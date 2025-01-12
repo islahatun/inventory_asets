@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\barang;
+use App\Models\header_barang;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\DataTables;
@@ -19,6 +20,7 @@ class BarangController extends Controller
             'type_menu' => 'master',
             'menu'      => 'Barang',
             'form'      => 'Form Barang',
+            'header'    => header_barang::all()
         ];
         return view('pages.barang.index', $data);
     }
@@ -60,6 +62,7 @@ class BarangController extends Controller
         $data =  $request->validate([
             'nama_barang' => 'required',
             'satuan' => 'required',
+            'harga' => 'required',
         ]);
 
         $data['kode_barang']    = $this->generateKodeBarang();
@@ -106,6 +109,7 @@ class BarangController extends Controller
         $request->validate([
             'nama_barang'   => 'required',
             'satuan'       => 'required',
+            'harga'       => 'required',
 
         ]);
 
@@ -113,6 +117,8 @@ class BarangController extends Controller
         $barang = barang::find($request->id);
         $barang->nama_barang = $request->nama_barang;
         $barang->satuan = $request->satuan;
+        $barang->harga = $request->harga;
+        $barang->id_header = $request->id_header;
 
         if ($barang->save()) {
             $message = array(

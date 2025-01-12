@@ -10,6 +10,7 @@
             {{-- <a href="index.html">St</a> --}}
         </div>
         <ul class="sidebar-menu">
+            @if(Auth::user()->role ==2)
             <li class="menu-header">Dashboard</li>
             <li class="nav-item dropdown {{ $type_menu === 'dashboard' ? 'active' : '' }}">
                 <a href="#"
@@ -22,6 +23,8 @@
 
                 </ul>
             </li>
+
+
             <li class="menu-header">Starter</li>
             <li class="nav-item dropdown {{ $type_menu === 'master' ? 'active' : '' }}">
                 <a href="#"
@@ -42,6 +45,7 @@
                     </li>
                 </ul>
             </li>
+            @endif
             {{-- <li class="{{ Request::is('blank-page') ? 'active' : '' }}">
                 <a class="nav-link"
                     href="{{ url('blank-page') }}"><i class="far fa-square"></i> <span>Blank Page</span></a>
@@ -50,6 +54,7 @@
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Transaksi</span></a>
                 <ul class="dropdown-menu">
+                    @if(Auth::user()->role == 2)
                     <li class="{{ Request::is('barangMasuk') ? 'active' : '' }}">
                         <a class="nav-link"
                             href="{{ url('barangMasuk') }}">Barang Masuk</a>
@@ -58,14 +63,17 @@
                         <a class="nav-link"
                             href="{{ url('barangKeluar') }}">Barang Keluar</a>
                     </li>
-                    <li class="{{ Request::is('pengajuan') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('pengajuan') }}">Pengajuan Barang Divisi</a>
-                    </li>
                     <li class="{{ Request::is('acc') ? 'active' : '' }}">
                         <a class="nav-link"
                             href="{{ url('acc') }}">Acc Pengajuan Barang</a>
                     </li>
+                    @endif
+                    @if(Auth::user()->role == 1)
+                    <li class="{{ Request::is('pengajuan') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('pengajuan') }}">Pengajuan Barang Divisi</a>
+                    </li>
+                    @endif
                     <li class="{{ Request::is('aset') ? 'active' : '' }}">
                         <a class="nav-link"
                             href="{{ url('aset') }}">Aset Divisi</a>
@@ -73,6 +81,7 @@
 
                 </ul>
             </li>
+            @if(Auth::user()->role !=1)
             <li class="nav-item dropdown {{ $type_menu === 'report' ? 'active' : '' }}">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-th"></i> <span>Report</span></a>
@@ -89,10 +98,9 @@
                         <a class="nav-link"
                             href="{{ url('reportBarang') }}">Stock Opname</a>
                     </li>
-
-
                 </ul>
             </li>
+            @endif
         </ul>
     </aside>
 </div>

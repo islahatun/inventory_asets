@@ -25,7 +25,7 @@
             <div class="section-body">
 
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-8">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $menu }}</h4>
@@ -41,7 +41,8 @@
                                                 <th>Kode Barang</th>
                                                 <th>Nama Barang</th>
                                                 <th>Satuan Barang</th>
-                                                <th>Total Barang</th>
+                                                <th>Stok Barang</th>
+                                                <th>Harga Satuan</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -53,7 +54,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
@@ -63,12 +64,25 @@
                                 <div class="card-body">
                                     <input type="hidden" name="id">
                                     <div class="form-group">
+                                        <label for="catgory_name">Header Barang</label>
+                                        <select class="form-control" name="id_header">
+                                            @foreach ($header as $h)
+                                                <option value="{{ $h->id }}"> {{ $h->name }}</option>
+                                            @endforeach
+
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="catgory_name">Nama Barang</label>
                                         <input type="text" name="nama_barang" class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label for="catgory_name">Satuan</label>
                                         <input type="text" name="satuan" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="catgory_name">Harga satuan</label>
+                                        <input type="text" name="harga" class="form-control">
                                     </div>
 
                                 </div>
@@ -125,12 +139,12 @@
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
-                    },{
+                    }, {
                         data: "kode_barang",
                         orderable: true,
                         searchable: true
                     },
-                     {
+                    {
                         data: "nama_barang",
                         orderable: true,
                         searchable: true
@@ -141,6 +155,11 @@
                     },
                     {
                         data: "stok",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "harga",
                         orderable: true,
                         searchable: true
                     },
@@ -161,7 +180,7 @@
                                 `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },
-                        "targets": 5
+                        "targets": 6
                     },
                 ]
             });

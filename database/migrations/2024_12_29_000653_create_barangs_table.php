@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('kode_barang');
             $table->string('nama_barang');
             $table->string('satuan');
+            $table->double('harga',10,2);
+            $table->integer('id_header')->nullable();
             $table->integer('stok')->default(0);
             $table->softDeletes();
             $table->timestamps();
