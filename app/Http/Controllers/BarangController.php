@@ -34,7 +34,7 @@ class BarangController extends Controller
                 return 'Aktif';
             })
             ->addColumn('id_header', function ($data) {
-                return $data->header_barang ? $data->header_barang->name : '';
+                return $data->id_header;
             })
             ->make(true);
     }
@@ -63,9 +63,10 @@ class BarangController extends Controller
             'nama_barang' => 'required',
             'satuan' => 'required',
             'harga' => 'required',
+            'id_header' => 'required',
         ]);
 
-        $data['kode_barang']    = $this->generateKodeBarang();
+        $data['kode_barang']    = $this->generateKodeBarang($request->id_header);
 
         $result = barang::create($data);
 
@@ -110,6 +111,7 @@ class BarangController extends Controller
             'nama_barang'   => 'required',
             'satuan'       => 'required',
             'harga'       => 'required',
+            'id_header'       => 'required',
 
         ]);
 
@@ -155,8 +157,10 @@ class BarangController extends Controller
         echo json_encode($message);
     }
 
-    function generateKodeBarang()
+    function generateKodeBarang($id_header)
     {
+
+        $header = header_barang::find($id_header);
         // Cari kode barang terakhir
         $lastKode = Barang::max('kode_barang');
 
@@ -169,7 +173,7 @@ class BarangController extends Controller
         }
 
         // Format kode barang baru
-        return 'BRG-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        return $header->kode_header . '-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
     public function print($tgl_awal = 0, $tgl_akhir = 0)
@@ -179,16 +183,16 @@ class BarangController extends Controller
 
         $query = barang::query();
         $barang  = $query->with('header_barang', 'barang_masuk', 'barang_keluar');
-        if($tgl_awal != 0 && $tgl_akhir != 0){
-            $barang->whereBetween('created_at',[$tgl_awal,$tgl_akhir]);
-            $barang->whereHas('barang_masuk',function ($data) use ($tgl_awal,$tgl_akhir){
-                            $data->whereBetween('tanggal_masuk',[$tgl_awal,$tgl_akhir]);
-                        });
-            $barang->whereHas('barang_keluar',function ($data) use ($tgl_awal,$tgl_akhir){
-                            $data->whereBetween('tanggal_keluar',[$tgl_awal,$tgl_akhir]);
-                        });
+        if ($tgl_awal != 0 && $tgl_akhir != 0) {
+            $barang->whereBetween('created_at', [$tgl_awal, $tgl_akhir]);
+            $barang->whereHas('barang_masuk', function ($data) use ($tgl_awal, $tgl_akhir) {
+                $data->whereBetween('tanggal_masuk', [$tgl_awal, $tgl_akhir]);
+            });
+            $barang->whereHas('barang_keluar', function ($data) use ($tgl_awal, $tgl_akhir) {
+                $data->whereBetween('tanggal_keluar', [$tgl_awal, $tgl_akhir]);
+            });
         }
-        $barang = $barang->get()->groupBy(function($item) {
+        $barang = $barang->get()->groupBy(function ($item) {
             return $item->header_barang->id; // Mengelompokkan berdasarkan id_header
         });
         $data = [

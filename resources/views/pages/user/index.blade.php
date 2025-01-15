@@ -63,9 +63,9 @@
                                     <input type="hidden" name="id">
                                     <div class="form-group">
                                         <label for="catgory_name">Nama Divisi</label>
-                                        <select name="departement_id" class="form-control" id="select2">
-                                            @foreach ($divisi as $d )
-                                            <option value="{{ $d->id }}">{{ $d->name_departement }}</option>
+                                        <select name="departement_id" class="form-control" id="departement_id">
+                                            @foreach ($divisi as $d)
+                                                <option value="{{ $d->id }}">{{ $d->name_departement }}</option>
                                             @endforeach
 
                                         </select>
@@ -115,16 +115,16 @@
         var method;
 
         method = 'POST';
-        formUrl= "{{ route('user.store') }}"
+        formUrl = "{{ route('user.store') }}"
 
 
         $(document).ready(function() {
 
             $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             dt = $('#table-1').DataTable({
                 "destroy": true,
@@ -163,9 +163,11 @@
 
                     {
                         "render": function(data, type, row, meta) {
-                            var result = `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
-                            result += `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
-                            return result ;
+                            var result =
+                                `<button class="btn btn-sm btn-success" type="button" onclick='edit(${meta.row})'>Edit</button> &nbsp;`;
+                            result +=
+                                `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
+                            return result;
                         },
                         "targets": 4
                     },
@@ -176,9 +178,10 @@
         function edit(obj) {
             var data = dt.row(obj).data();
             $("#formUser").deserialize(data)
-
+            console.log()
+            $('#departement_id').val(data.departement_id).trigger('change');
             method = 'POST';
-            formUrl= "{{ route('user.update') }}";
+            formUrl = "{{ route('user.update') }}";
 
         }
 
@@ -223,45 +226,45 @@
 
         function remove(obj) {
 
-                            let data = dt.row(obj).data();
-                            Swal
-                                .fire({
-                                    title: 'Apakah anda yakin.?',
-                                    text: "Data yang dihapus tidak dapat dikembalikan!",
-                                    showCancelButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                    confirmButtonText: 'Ya!'
-                                })
-                                .then((result) => {
-                                    if (result.isConfirmed) {
-                                        $.ajax({
-                                            url:  "{{ route('user.destroy', ':id') }}".replace(':id', data.id),
-                                            type: "DELETE",
-                                            cache: false,
-                                            data: {
-                                                "_token": "{{ csrf_token() }}"
-                                            },
-                                            success: function (data, textStatus, jqXHR) {
-                                                let view = jQuery.parseJSON(data);
-                                                if (view.status == true) {
-                                                    toastr.success(view.message);
-                                                    setTimeout(function() {
-                                                        location.reload();
-                                                    }, 500);
-                                                } else {
-                                                    toastr.error(view.message);
-                                                    setTimeout(function() {
-                                                        location.reload();
-                                                    }, 500);
-                                                }
-                                            },
-                                            error: function (jqXHR, textStatus, errorThrown) {
-                                                toastr.error('Data gagal dihapus.');
-                                            }
-                                        });
-                                    }
-                                })
+            let data = dt.row(obj).data();
+            Swal
+                .fire({
+                    title: 'Apakah anda yakin.?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya!'
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('user.destroy', ':id') }}".replace(':id', data.id),
+                            type: "DELETE",
+                            cache: false,
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            success: function(data, textStatus, jqXHR) {
+                                let view = jQuery.parseJSON(data);
+                                if (view.status == true) {
+                                    toastr.success(view.message);
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 500);
+                                } else {
+                                    toastr.error(view.message);
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 500);
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                toastr.error('Data gagal dihapus.');
+                            }
+                        });
+                    }
+                })
 
 
         }

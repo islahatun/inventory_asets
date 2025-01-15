@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Master Barang')
+@section('title', 'Divisi')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -25,7 +25,7 @@
             <div class="section-body">
 
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-6">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $menu }}</h4>
@@ -38,12 +38,10 @@
                                                 <th class="text-center">
                                                     #
                                                 </th>
-                                                <th>Kode Barang</th>
-                                                <th>Nama Barang</th>
-                                                <th>Satuan Barang</th>
-                                                <th>Stok Barang</th>
-                                                <th>Harga Satuan</th>
-                                                <th width="20%">Action</th>
+                                                <th>Kode Header</th>
+                                                <th>Nama Header</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -54,37 +52,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                         <div class="card">
                             <div class="card-header">
                                 <h4>{{ $form }}</h4>
                             </div>
-                            <form id="formBarang" action="" method="method">
+                            <form id="formJurusan" action="" method="method">
                                 @csrf
                                 <div class="card-body">
                                     <input type="hidden" name="id">
                                     <div class="form-group">
-                                        <label for="catgory_name">Header Barang</label>
-                                        <select class="form-control" name="id_header" id="kode_header">
-                                            @foreach ($header as $h)
-                                                <option value="{{ $h->id }}"> {{ $h->name }}</option>
-                                            @endforeach
-
-                                        </select>
+                                        <label for="catgory_name">Kode Header</label>
+                                        <input type="text" id="kode_header" name="kode_header" class="form-control">
                                     </div>
                                     <div class="form-group">
-                                        <label for="catgory_name">Nama Barang</label>
-                                        <input type="text" name="nama_barang" class="form-control">
+                                        <label for="catgory_name">Nama Header</label>
+                                        <input type="text" id="name" name="name" class="form-control">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Satuan</label>
-                                        <input type="text" name="satuan" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="catgory_name">Harga satuan</label>
-                                        <input type="text" name="harga" class="form-control">
-                                    </div>
-
                                 </div>
                                 <div class="card-footer">
                                     <button class="btn btn-primary">Submit</button>
@@ -116,7 +100,7 @@
         var method;
 
         method = 'POST';
-        formUrl = "{{ route('barang.store') }}"
+        formUrl = "{{ route('header.store') }}"
 
 
         $(document).ready(function() {
@@ -133,33 +117,22 @@
                 "select": true,
                 // "scrollX": true,
                 "ajax": {
-                    "url": "{{ route('getBarang') }}",
+                    "url": "{{ route('getDataHeader') }}",
                 },
                 "columns": [{
                         data: "DT_RowIndex",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "kode_barang",
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: "nama_barang",
+                        data: "kode_header",
                         orderable: true,
                         searchable: true
                     }, {
-                        data: "satuan",
+                        data: "name",
                         orderable: true,
                         searchable: true
-                    },
-                    {
-                        data: "stok",
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: "harga",
+                    }, {
+                        data: "status",
                         orderable: true,
                         searchable: true
                     },
@@ -180,7 +153,7 @@
                                 `<button class="btn btn-sm btn-danger" type="button" onclick='remove(${meta.row})'>Hapus</button>`;
                             return result;
                         },
-                        "targets": 6
+                        "targets": 4
                     },
                 ]
             });
@@ -188,18 +161,16 @@
 
         function edit(obj) {
             var data = dt.row(obj).data();
-            $("#formBarang").deserialize(data)
-
-            $('#id_header').val(data.id_header).trigger('change');
+            $("#formJurusan").deserialize(data)
 
             method = 'POST';
-            formUrl = "{{ route('barang.update') }}";
+            formUrl = "{{ route('header.update') }}";
 
         }
 
 
 
-        $("#formBarang").submit(function(e) {
+        $("#formJurusan").submit(function(e) {
 
             e.preventDefault();
             var formData = new FormData(this);
@@ -251,7 +222,7 @@
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ route('barang.destroy', ':id') }}".replace(':id', data.id),
+                            url: "{{ route('header.destroy', ':id') }}".replace(':id', data.id),
                             type: "DELETE",
                             cache: false,
                             data: {

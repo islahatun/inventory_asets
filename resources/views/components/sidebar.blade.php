@@ -39,6 +39,10 @@
                         <a class="nav-link"
                             href="{{ url('user') }}">Master User</a>
                     </li>
+                    <li class="{{ Request::is('header') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('header') }}">Header Barang</a>
+                    </li>
                     <li class="{{ Request::is('barang') ? 'active' : '' }}">
                         <a class="nav-link"
                             href="{{ url('barang') }}">Master Barang</a>

@@ -7,6 +7,7 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\HeaderBarangController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::redirect('/', '/login');
-Route::get('/login',[AuthController::class,'index'])->name('login');
+Route::get('/login',[AuthController::class,'index'])->name('login')->middleware('guest');
 Route::post('/login-submit',[AuthController::class,'login'])->name('login-submit');
 Route::post('/logout',[AuthController::class,'logout'])->name('logout');
 
@@ -31,8 +32,8 @@ Route::post('/logout',[AuthController::class,'logout'])->name('logout');
 // Dashboard
 // Route::get('/dashboard',[dashboardController::class,'index'])->name('dashboard');
 
-Route::get('/getDataDepartement', [DepartementController::class, 'getData'])->name('getDataDepartement');
-Route::post('/updateDepartement', [DepartementController::class, 'update'])->name('departement.update');
+Route::get('/getDataDepartement', [DepartementController::class, 'getData'])->name('getDataDepartement')->middleware('auth');
+Route::post('/updateDepartement', [DepartementController::class, 'update'])->name('departement.update')->middleware('auth');
 Route::resource('departement',DepartementController::class)->names([
     'index'   => 'departement.index',
     'create'  => 'departement.create',
@@ -40,10 +41,21 @@ Route::resource('departement',DepartementController::class)->names([
     'show'    => 'departement.show',
     'edit'    => 'departement.edit',
     'destroy' => 'departement.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
-Route::get('/getDataUser', [UserController::class, 'getData'])->name('getDataUser');
-Route::post('/updateUser', [UserController::class, 'update'])->name('user.update');
+Route::get('/getDataHeader', [HeaderBarangController::class, 'getData'])->name('getDataHeader')->middleware('auth');
+Route::post('/updateHeader', [HeaderBarangController::class, 'update'])->name('header.update')->middleware('auth');
+Route::resource('header',HeaderBarangController::class)->names([
+    'index'   => 'header.index',
+    'create'  => 'header.create',
+    'store'   => 'header.store',
+    'show'    => 'header.show',
+    'edit'    => 'header.edit',
+    'destroy' => 'header.destroy',
+])->except('update')->middleware('auth');
+
+Route::get('/getDataUser', [UserController::class, 'getData'])->name('getDataUser')->middleware('auth');
+Route::post('/updateUser', [UserController::class, 'update'])->name('user.update')->middleware('auth');
 Route::resource('user',UserController::class)->names([
     'index'   => 'user.index',
     'create'  => 'user.create',
@@ -51,32 +63,32 @@ Route::resource('user',UserController::class)->names([
     'show'    => 'user.show',
     'edit'    => 'user.edit',
     'destroy' => 'user.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
 
-Route::get('/getBarangKeluar', [BarangKeluarController::class, 'getData'])->name('getBarangKeluar');
-Route::get('/reportBarangKeluar', [BarangKeluarController::class, 'create'])->name('reportBarangKeluar');
-Route::get('/printBarangKeluar/{tgl_awal}/{tgl_akhir}', [BarangKeluarController::class, 'print'])->name('printBarangKeluar');
-Route::post('/updateBarangKeluar', [BarangKeluarController::class, 'update'])->name('barangKeluar.update');
+Route::get('/getBarangKeluar', [BarangKeluarController::class, 'getData'])->name('getBarangKeluar')->middleware('auth');
+Route::get('/reportBarangKeluar', [BarangKeluarController::class, 'create'])->name('reportBarangKeluar')->middleware('auth');
+Route::get('/printBarangKeluar/{tgl_awal}/{tgl_akhir}', [BarangKeluarController::class, 'print'])->name('printBarangKeluar')->middleware('auth');
+Route::post('/updateBarangKeluar', [BarangKeluarController::class, 'update'])->name('barangKeluar.update')->middleware('auth');
 Route::resource('barangKeluar',BarangKeluarController::class)->names([
     'index'   => 'barangKeluar.index',
     'store'   => 'barangKeluar.store',
     'show'    => 'barangKeluar.show',
     'edit'    => 'barangKeluar.edit',
     'destroy' => 'barangKeluar.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
-Route::get('/getBarangMasuk', [BarangMasukController::class, 'getData'])->name('getBarangMasuk');
-Route::get('/reportBarangMasuk', [BarangMasukController::class, 'create'])->name('reportBarangMasuk');
-Route::get('/printBarangMasuk/{tgl_awal}/{tgl_akhir}', [BarangMasukController::class, 'print'])->name('printBarangMasuk');
-Route::post('/updateBarangMasuk', [BarangMasukController::class, 'update'])->name('barangMasuk.update');
+Route::get('/getBarangMasuk', [BarangMasukController::class, 'getData'])->name('getBarangMasuk')->middleware('auth');
+Route::get('/reportBarangMasuk', [BarangMasukController::class, 'create'])->name('reportBarangMasuk')->middleware('auth');
+Route::get('/printBarangMasuk/{tgl_awal}/{tgl_akhir}', [BarangMasukController::class, 'print'])->name('printBarangMasuk')->middleware('auth');
+Route::post('/updateBarangMasuk', [BarangMasukController::class, 'update'])->name('barangMasuk.update')->middleware('auth');
 Route::resource('barangMasuk',BarangMasukController::class)->names([
     'index'   => 'barangMasuk.index',
     'store'   => 'barangMasuk.store',
     'show'    => 'barangMasuk.show',
     'edit'    => 'barangMasuk.edit',
     'destroy' => 'barangMasuk.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
 Route::get('/getBarang', [BarangController::class, 'getData'])->name('getBarang');
 Route::get('/reportBarang', [BarangController::class, 'create'])->name('reportBarang');
@@ -88,7 +100,7 @@ Route::resource('barang',BarangController::class)->names([
     'show'    => 'barang.show',
     'edit'    => 'barang.edit',
     'destroy' => 'barang.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
 
 
@@ -100,13 +112,13 @@ Route::resource('aset',AsetController::class)->names([
     'show'    => 'aset.show',
     'edit'    => 'aset.edit',
     'destroy' => 'aset.destroy',
-])->except('update');
+])->except('update')->middleware('auth');
 
-Route::get('/acc', [PengajuanController::class, 'create'])->name('acc');
+Route::get('/acc', [PengajuanController::class, 'create'])->name('acc')->middleware('auth');
 Route::get('/getDataAcc', [PengajuanController::class, 'getDataAcc'])->name('getDataAcc');
 Route::post('/updateAcc', [PengajuanController::class, 'acc'])->name('acc.update');
 Route::get('/getDetailDataAcc/{user_id}/{tgl}', [PengajuanController::class, 'getDetailData'])->name('getDetailDataAcc');
-Route::get('/detailAcc/{user_id}/{tgl}', [PengajuanController::class, 'edit'])->name('detailAcc');
+Route::get('/detailAcc/{user_id}/{tgl}', [PengajuanController::class, 'edit'])->name('detailAcc')->middleware('auth');
 
 Route::get('/getDataPengajuan', [PengajuanController::class, 'getData'])->name('getDataPengajuan');
 Route::post('/updatePengajuan', [PengajuanController::class, 'update'])->name('pengajuan.update');
@@ -115,13 +127,13 @@ Route::resource('pengajuan',PengajuanController::class)->names([
     'store'   => 'pengajuan.store',
     'show'    => 'pengajuan.show',
     'destroy' => 'pengajuan.destroy',
-])->except('update','create','edit');
+])->except('update','create','edit')->middleware('auth');
 
-Route::get('/reportPengajuan', [PengajuanController::class, 'edit'])->name('reportPengajuan');
+Route::get('/reportPengajuan', [PengajuanController::class, 'edit'])->name('reportPengajuan')->middleware('auth');
 
 
 // Route::redirect('/', '/dashboard-general-dashboard');
 
 // Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
