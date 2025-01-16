@@ -22,28 +22,29 @@ class UserController extends Controller
             'form'      => 'Form User',
             'divisi'    => departement::all()
         ];
-        return view('pages.user.index',$data);
+        return view('pages.user.index', $data);
     }
 
-    public function getData(){
+    public function getData()
+    {
         $result  = User::with('departement')->get();
 
         return DataTables::of($result)->addIndexColumn()
-        ->addColumn('role', function ($data) {
-            if($data->role ==1){
-                $return = 'User';
-            }else if($data->role ==2){
-                $return = 'Administrator';
-            }else{
-                $return = 'Pengawa';
-            }
-            return $return;
-        })
-        ->addColumn('departement', function ($data) {
+            ->addColumn('role', function ($data) {
+                if ($data->role == 1) {
+                    $return = 'User';
+                } else if ($data->role == 2) {
+                    $return = 'Administrator';
+                } else {
+                    $return = 'Pengawa';
+                }
+                return $return;
+            })
+            ->addColumn('departement', function ($data) {
 
-            return $data->departement->name_departement;
-        })
-        ->make(true);
+                return $data->departement ? $data->departement->name_departement : "";
+            })
+            ->make(true);
     }
 
     /**
@@ -59,11 +60,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-         // Validate the request data
+        // Validate the request data
         $data =  $request->validate([
             'departement_id' => 'required',
-            'email'=> 'required',
-            'role'=> 'required',
+            'email' => 'required',
+            'role' => 'required',
         ]);
 
 
@@ -72,12 +73,12 @@ class UserController extends Controller
 
         $result = User::create($data);
 
-        if($result){
+        if ($result) {
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil di simpan'
             );
-        }else{
+        } else {
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal di simpan'
@@ -111,8 +112,8 @@ class UserController extends Controller
         // Validate the request data
         $request->validate([
             'departement_id' => 'required',
-            'email'=> 'required',
-            'role'=> 'required',
+            'email' => 'required',
+            'role' => 'required',
         ]);
 
         // Update the category with the new data
@@ -122,12 +123,12 @@ class UserController extends Controller
         $user->role = $request->role;
 
 
-        if($user->save()){
+        if ($user->save()) {
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil di ubah'
             );
-        }else{
+        } else {
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal di ubah'
@@ -142,12 +143,12 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if($user->delete()){
+        if ($user->delete()) {
             $message = array(
                 'status' => true,
                 'message' => 'Data Berhasil dihapus'
             );
-        }else{
+        } else {
             $message = array(
                 'status' => false,
                 'message' => 'Data gagal dihapus'

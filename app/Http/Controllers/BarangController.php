@@ -34,8 +34,9 @@ class BarangController extends Controller
                 return 'Aktif';
             })
             ->addColumn('id_header', function ($data) {
-                return $data->id_header;
+                return $data->header_barang->kode_header;
             })
+
             ->make(true);
     }
 
